@@ -6,44 +6,26 @@ namespace WebServer
 {
     public class WeatherApiClient
     {
-        private readonly string _baseUrl;
+        private readonly string baseUrl;
+        private readonly HttpClient client; 
 
         public WeatherApiClient(string baseUrl)
         {
-            _baseUrl = baseUrl;
+            this.baseUrl = baseUrl;
+            client = new HttpClient();
         }
 
-        public string GetWeatherForecast(string query, int days, string aqi, string alerts, string apiKey)
+        public async Task<string> GetWeatherForecast(string query, int days, string aqi, string alerts)
         {
             try
             {
-                var client = new RestClient(_baseUrl);
-                var request = new RestRequest("forecast.json", Method.Get);
-                request.AddParameter("key", apiKey);
-                request.AddParameter("q", query);
-                request.AddParameter("days", days);
-                request.AddParameter("aqi", aqi);
-                request.AddParameter("alerts", alerts);
+                string url = $"{baseUrl}&q={query}&days={days}&aqi={aqi}&alerts={alerts}";
+                HttpResponseMessage response = await client.GetAsync(url);
 
-                var response = client.Execute(request);
-
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (response.IsSuccessStatusCode)
                 {
-                    return "Error: Weather forecast not found.";
-                }
-                else if (!string.IsNullOrEmpty(response.Content))
-                {
-                    //Provera tipa odgovora
-                    try
-                    {
-                        var json = System.Text.Json.JsonDocument.Parse(response.Content);
-                        // ovde moze da se doda dodatna provera da li je JSON u očekivanom formatu?
-                    }
-                    catch (Exception ex)
-                    {
-                        return $"Error: Invalid response format - {ex.Message}";
-                    }
-                    return response.Content;
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    return responseBody;
                 }
                 else
                 {
@@ -52,10 +34,9 @@ namespace WebServer
             }
             catch (Exception ex)
             {
-                //ovde mozemo da dodamo vrste gresaka 
                 return $"Error: {ex.GetType().Name} - {ex.Message}";
             }
-        }   
+        }
     }
 }
 

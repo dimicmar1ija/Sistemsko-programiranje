@@ -1,60 +1,56 @@
 ﻿using System;
+using System.Runtime.InteropServices.JavaScript;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace WebServer
 {
     public class WebServer
     {
-        private readonly string _apiKey;
-        private readonly string _baseUrl;
-        private readonly WeatherApiClient _weatherApiClient;
-        private readonly LRUCache _cache;
+        private readonly WeatherApiClient weatherApiClient;
+        private readonly LRUCache cache;
 
-        public WebServer(string apiKey, string baseUrl, int cacheCapacity)
+        public WebServer(string baseUrl, int cacheCapacity)
         {
-            _apiKey = apiKey;
-            _baseUrl = baseUrl;
-            _weatherApiClient = new WeatherApiClient(baseUrl);
-            _cache = new LRUCache(cacheCapacity);
+            weatherApiClient = new WeatherApiClient(baseUrl);
+            cache = new LRUCache(cacheCapacity);
         }
 
         public void Start()
         {
             Console.WriteLine("Web server started...");
 
-            // primanje zahteva
+            // primanje zahteva??
             ThreadPool.QueueUserWorkItem(ProcessRequest, null);
         }
 
-        private void ProcessRequest(object state)
+        private async void ProcessRequest(object state)
         {
             try
             {
-                //obrada zahteva
                 Console.WriteLine("Processing request...");
 
-                //pretraga vremenske prognoze
+                //omoguciti unos parametara??
                 string query = "Belgrade";
                 int days = 1;
                 string aqi = "yes";
                 string alerts = "no";
 
-                byte[] cachedResponse = _cache.Get(query);
+                byte[] cachedResponse = cache.Get(query);
+                JObject data;
                 if (cachedResponse != null)
                 {
                     Console.WriteLine("Cached response found.");
-                    Console.WriteLine("Weather Forecast:");
-                    Console.WriteLine(System.Text.Encoding.UTF8.GetString(cachedResponse));
+                    data = JObject.Parse(System.Text.Encoding.UTF8.GetString(cachedResponse));
                 }
                 else
                 {
-                    string weatherForecast = _weatherApiClient.GetWeatherForecast(query, days, aqi, alerts, _apiKey);
-                    Console.WriteLine("Weather Forecast:");
-                    Console.WriteLine(weatherForecast);
-                    _cache.Set(query, System.Text.Encoding.UTF8.GetBytes(weatherForecast));
+                    string weatherForecast = await weatherApiClient.GetWeatherForecast(query, days, aqi, alerts);
+                    data=JObject.Parse(weatherForecast);
+                    cache.Set(query, System.Text.Encoding.UTF8.GetBytes(weatherForecast));
                 }
-
-                //logika za slanje odgovora klijentu
+                Console.WriteLine("Weather Forecast:");
+                Console.WriteLine(data);
                 SendResponseToClient("Sample response to client");
             }
             catch (Exception ex)
@@ -65,7 +61,7 @@ namespace WebServer
 
         private void SendResponseToClient(string response)
         {
-            //odgovor klijentu
+            //sta je ovo
             Console.WriteLine($"Sending response to client: {response}");
         }
     }

@@ -6,14 +6,14 @@ namespace WebServer
     {
         static void Main(string[] args)
         {
-            string apiKey = "4bfbbbb6dec341f1b98101838242604";
-            string baseUrl = "http://api.weatherapi.com/v1";
+            string apiKey = "a4d1a083444548719ac122453242404";
+            string baseUrl = $"http://api.weatherapi.com/v1/forecast.json?key={apiKey}";
             int cacheCapacity = 10;
 
-            var server = new WebServer(apiKey, baseUrl, cacheCapacity);
+            var server = new WebServer(baseUrl, cacheCapacity);
             server.Start();
 
-            Console.ReadLine(); // Zadrzava aplikaciju otvorenom da bi mogli da vidimo logove
+           Console.ReadLine();
         }
     }
 }
