@@ -9,7 +9,7 @@ namespace WebServer
         {
             public string key;
             public byte[] val;
-            public ListNode? prev, next;
+            public ListNode prev, next;
             public ListNode(string k, byte[] v)
             {
                 key = k;
@@ -58,7 +58,7 @@ namespace WebServer
 
         public void Set(string key, byte[] value)
         {
-            if (map.TryGetValue(key, out ListNode? target))
+            if (map.TryGetValue(key, out ListNode target))
             {
                 target.val = value;
                 Remove(target);
@@ -68,7 +68,7 @@ namespace WebServer
             {
                 if (size == capacity)
                 {
-                    map.Remove(head.next!.key);
+                    map.Remove(head.next.key);
                     Remove(head.next);
                     --size;
                 }
@@ -85,14 +85,14 @@ namespace WebServer
         {
             target.next = tail;
             target.prev = tail.prev;
-            tail.prev!.next = target;
+            tail.prev.next = target;
             tail.prev = target;
         }
 
         private void Remove(ListNode target)
         {
-            target.next!.prev = target.prev;
-            target.prev!.next = target.next;
+            target.next.prev = target.prev;
+            target.prev.next = target.next;
             Console.WriteLine($"Removed {target.key} from cache because it was the least recently used.");
         }
     }

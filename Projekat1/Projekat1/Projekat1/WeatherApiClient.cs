@@ -15,16 +15,16 @@ namespace WebServer
             client = new HttpClient();
         }
 
-        public async Task<string> GetWeatherForecast(string query, int days, string aqi, string alerts)
+        public string GetWeatherForecast(string query, int days, string aqi, string alerts)
         {
             try
             {
                 string url = $"{baseUrl}&q={query}&days={days}&aqi={aqi}&alerts={alerts}";
-                HttpResponseMessage response = await client.GetAsync(url);
+                HttpResponseMessage response = client.GetAsync(url).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string responseBody = await response.Content.ReadAsStringAsync();
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
                     return responseBody;
                 }
                 else
