@@ -6,8 +6,8 @@ namespace WebServer
 {
     public class WeatherApiClient
     {
-        private readonly string baseUrl;
-        private readonly HttpClient client; 
+        private string baseUrl;
+        private HttpClient client;
 
         public WeatherApiClient(string baseUrl)
         {

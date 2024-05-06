@@ -22,9 +22,9 @@ namespace WebServer
         private int capacity, size;
         private ListNode head, tail;
 
-        private readonly Dictionary<string, ListNode> map;
+        private Dictionary<string, ListNode> map;
 
-        public LRUCache(int capacity) 
+        public LRUCache(int capacity)
         {
             if (capacity <= 0)
             {
@@ -33,7 +33,7 @@ namespace WebServer
 
             this.capacity = capacity;
             size = 0;
-            head = new ListNode(null,null);
+            head = new ListNode(null, null);
             tail = new ListNode(null, null);
             tail.prev = head;
             head.next = tail;
