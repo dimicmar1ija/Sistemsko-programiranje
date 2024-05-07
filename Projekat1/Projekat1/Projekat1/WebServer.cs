@@ -111,29 +111,46 @@ namespace WebServer
                 disposed = true;
             }
         }
+
         private void MakeResponse(HttpListenerContext context, string responseContent, bool badRequest)
         {
             var response = context.Response;
             var buffer = Encoding.UTF8.GetBytes(responseContent);
             response.ContentLength64 = buffer.Length;
-            var outputString = response.OutputStream;
-            outputString.Write(buffer, 0, buffer.Length);
-            response.ContentType = "text/html";
-            if (badRequest)
+
+            try
             {
-                //ispraviti!!!!
-                response.StatusCode = (int)HttpStatusCode.BadRequest;
-                response.StatusDescription = "Bad Request";
+                using (var outputString = response.OutputStream)
+                {
+                    outputString.Write(buffer, 0, buffer.Length);
+                }
+
+                response.ContentType = "text/html";
+                if (badRequest)
+                {
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    response.StatusDescription = "Bad Request";
+                }
+                else
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.StatusDescription = "OK";
+                }
+                response.ContentEncoding = Encoding.UTF8;
             }
-            else
+            catch (Exception ex)
             {
-                response.StatusCode = (int)HttpStatusCode.OK;
-                response.StatusDescription = "OK";
+                Console.WriteLine($"Error while sending response: {ex.Message}");
             }
-            response.ContentEncoding = Encoding.UTF8;
-            outputString.Close();
-            response.Close();
+            finally
+            {
+                response.Close();
+            }
         }
+        /*outputString je kreiran kao using blok kako bi se osiguralo da se ispravno oslobodi
+        čak i ako dođe do izuzetka. Takođe, dodat je blok try-catch-finally kako bi se uhvatile
+        moguće greške prilikom slanja odgovora i osiguralo da se response uvek zatvori, čak i
+        ako dođe do izuzetka.*/
     }
 }
 
