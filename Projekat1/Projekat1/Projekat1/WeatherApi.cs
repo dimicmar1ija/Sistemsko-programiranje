@@ -4,12 +4,12 @@ using RestSharp;
 
 namespace WebServer
 {
-    public class WeatherApiClient
+    public class WeatherApi
     {
-        private string baseUrl;
-        private HttpClient client;
+        private readonly string baseUrl;
+        private readonly HttpClient client;
 
-        public WeatherApiClient(string baseUrl)
+        public WeatherApi(string baseUrl)
         {
             this.baseUrl = baseUrl;
             client = new HttpClient();

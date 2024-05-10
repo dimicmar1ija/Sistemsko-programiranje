@@ -18,8 +18,11 @@ namespace WebServer
             {
                 Console.WriteLine(ex.Message);
             }
+            finally
+            {
+                server.Stop();
+            }
             Console.ReadLine();
-            server.Stop();
         }
     }
 }

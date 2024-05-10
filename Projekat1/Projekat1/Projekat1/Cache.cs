@@ -5,7 +5,7 @@ namespace WebServer
 {
     public class LRUCache
     {
-        class ListNode // dvostruko spregnuta Lancana lista
+        class ListNode // dvostruko spregnuta lancana lista
         {
             public string key;
             public byte[] val;
@@ -22,7 +22,8 @@ namespace WebServer
         private int capacity, size;
         private ListNode head, tail;
 
-        private Dictionary<string, ListNode> map;
+        private readonly Dictionary<string, ListNode> map;
+        private static readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
 
         public LRUCache(int capacity)
         {
@@ -47,17 +48,20 @@ namespace WebServer
 
         public byte[] Get(string key)
         {
+            locker.EnterWriteLock();
             if (map.TryGetValue(key, out ListNode target))
             {
                 Remove(target);
                 AddToLast(target);
                 return target.val!;
             }
+            locker.ExitWriteLock();
             return null;
         }
 
         public void Set(string key, byte[] value)
         {
+            locker.EnterWriteLock();
             if (map.TryGetValue(key, out ListNode target))
             {
                 target.val = value;
@@ -78,6 +82,7 @@ namespace WebServer
                 AddToLast(newNode);
                 ++size;
             }
+            locker.ExitWriteLock();
         }
 
 
