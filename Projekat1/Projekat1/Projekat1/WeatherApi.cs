@@ -29,12 +29,13 @@ namespace WebServer
                 }
                 else
                 {
-                    return "Error: Failed to retrieve weather forecast.";
+                    Console.WriteLine("Error: Failed to retrieve weather forecast.");
+                    return "";
                 }
             }
             catch (Exception ex)
             {
-                return $"Error: {ex.GetType().Name} - {ex.Message}";
+                throw new Exception(ex.Message);
             }
         }
     }

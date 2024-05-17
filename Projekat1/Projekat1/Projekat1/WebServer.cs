@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Web;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 
 namespace WebServer
@@ -28,6 +30,7 @@ namespace WebServer
             {
                 listener.Start();
                 Console.WriteLine("Web server started...");
+
                 while (true)
                 {
                     HttpListenerContext context = listener.GetContext();
@@ -60,7 +63,7 @@ namespace WebServer
                     MakeResponse(400, context, "Empty query.");
                     throw new Exception("Empty query.");
                 }
-                var param = context.Request.Url?.Query.Remove(0, 1).Split("&");
+                var param = context.Request.Url?.Query!.Remove(0, 1).Split("&");
                 if (param == null)
                 {
                     MakeResponse(400, context, "Null query.");
@@ -71,17 +74,20 @@ namespace WebServer
                     MakeResponse(400, context, "Query must have four parameters.");
                     throw new Exception("Query must have four parameters.");
                 }
-                var query = param[0].Split("=")[1];
-                var days = param[1].Split("=")[1];
-                var aqi = param[2].Split("=")[1];
-                var alerts = param[3].Split("=")[1];
+
+                string allParams = context.Request.Url?.Query!;
+                var parameters = HttpUtility.ParseQueryString(allParams);
+
+                var query = parameters["query"];
+                var days = parameters["days"];
+                var aqi = parameters["aqi"];
+                var alerts = parameters["alerts"];
 
                 JObject data;
                 Stopwatch sw = new();
                 sw.Start();
 
-                string request = context.Request.Url!.Query.Remove(0, 1);
-                Console.WriteLine(request);
+                string request = $"{query}{days}{aqi}{alerts}";
                 if (cache.ContainsKey(request))
                 {
                     byte[] cachedResponse = cache.Get(request);
@@ -98,7 +104,11 @@ namespace WebServer
                     sw.Stop();
 
                     Console.WriteLine($"Time elapsed when obtaining data from API: {sw.Elapsed}");
-
+                    if (weatherForecast == "")
+                    {
+                        MakeResponse(400, context, "Failed request.");
+                        throw new Exception("Failed request.");
+                    }
                     data = JObject.Parse(weatherForecast);
                     cache.Set(request, Encoding.UTF8.GetBytes(weatherForecast));
                 }
@@ -122,6 +132,7 @@ namespace WebServer
             {
                 listener.Stop();
                 listener.Close();
+                cache.Clear();
                 disposed = true;
             }
         }

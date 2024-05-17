@@ -48,43 +48,62 @@ namespace WebServer
 
         public byte[] Get(string key)
         {
-            locker.EnterWriteLock();
-            if (map.TryGetValue(key, out ListNode target))
+            try
             {
-                Remove(target);
-                AddToLast(target);
-                return target.val!;
+                locker.EnterWriteLock();
+                if (map.TryGetValue(key, out ListNode target))
+                {
+                    Remove(target);
+                    AddToLast(target);
+                    return target.val!;
+                }
             }
-            locker.ExitWriteLock();
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                locker.ExitWriteLock();
+            }
             return null;
         }
 
         public void Set(string key, byte[] value)
         {
-            locker.EnterWriteLock();
-            if (map.TryGetValue(key, out ListNode target))
+            try
             {
-                target.val = value;
-                Remove(target);
-                AddToLast(target);
-            }
-            else
-            {
-                if (size == capacity)
+                locker.EnterWriteLock();
+                if (map.TryGetValue(key, out ListNode target))
                 {
-                    map.Remove(head.next.key);
-                    Remove(head.next);
-                    --size;
+                    target.val = value;
+                    Remove(target);
+                    AddToLast(target);
                 }
+                else
+                {
+                    if (size == capacity)
+                    {
+                        map.Remove(head.next.key);
+                        Remove(head.next);
+                        --size;
+                    }
 
-                ListNode newNode = new ListNode(key, value);
-                map.Add(key, newNode);
-                AddToLast(newNode);
-                ++size;
+                    ListNode newNode = new ListNode(key, value);
+                    map.Add(key, newNode);
+                    AddToLast(newNode);
+                    ++size;
+                }
             }
-            locker.ExitWriteLock();
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                locker.ExitWriteLock();
+            }
         }
-
 
         private void AddToLast(ListNode target)
         {
@@ -99,6 +118,26 @@ namespace WebServer
             target.next.prev = target.prev;
             target.prev.next = target.next;
             Console.WriteLine($"Removed {target.key} from cache because it was the least recently used.");
+        }
+        public void Clear()
+        {
+            try
+            {
+                locker.EnterWriteLock();
+                map.Clear();
+                head.next = tail;
+                tail.prev = head;
+                size = 0;
+                Console.WriteLine("Cache cleared.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                locker.ExitWriteLock();
+            }
         }
     }
 }
