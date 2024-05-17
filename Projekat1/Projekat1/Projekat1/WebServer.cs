@@ -127,7 +127,7 @@ namespace WebServer
         public void Stop()
         {
             Console.WriteLine("Server stopped.");
-            if (!disposed) return;
+            if (disposed) return;
             else
             {
                 listener.Stop();
@@ -159,7 +159,7 @@ namespace WebServer
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine(e.Message);
                     return;
                 }
                 return;
@@ -174,7 +174,7 @@ namespace WebServer
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine(e.Message);
                     return;
                 }
                 return;

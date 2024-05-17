@@ -13,6 +13,7 @@ namespace WebServer
             try
             {
                 server.Start();
+                server.Stop();
             }
             catch (Exception ex)
             {
@@ -20,7 +21,7 @@ namespace WebServer
             }
             finally
             {
-                server.Stop();
+                //server.Stop();
             }
             Console.ReadLine();
         }
