@@ -34,7 +34,11 @@ namespace WebServer
                 while (true)
                 {
                     HttpListenerContext context = listener.GetContext();
-                    ThreadPool.QueueUserWorkItem(ProcessRequest, context);
+                    //ThreadPool.QueueUserWorkItem(ProcessRequest, context);
+                    Task.Run(() =>
+                    {
+                        ProcessRequest(context);
+                    });
                 }
             }
             catch (Exception ex)
@@ -43,7 +47,7 @@ namespace WebServer
             }
         }
 
-        private void ProcessRequest(object? state)
+        private async Task ProcessRequest(object? state)
         {
             try
             {
@@ -100,7 +104,7 @@ namespace WebServer
                 }
                 else
                 {
-                    string weatherForecast = weatherApiClient.GetWeatherForecast(query, int.Parse(days), aqi, alerts);
+                    string weatherForecast = await weatherApiClient.GetWeatherForecast(query, int.Parse(days), aqi, alerts);
                     sw.Stop();
 
                     Console.WriteLine($"Time elapsed when obtaining data from API: {sw.Elapsed}");
