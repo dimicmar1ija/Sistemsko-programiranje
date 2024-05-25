@@ -6,6 +6,7 @@ using System.Threading;
 using System.Web;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebServer
 {
@@ -24,7 +25,7 @@ namespace WebServer
             listener.Prefixes.Add($"http://{address}:{port}/");
         }
 
-        public void Start()
+        public async Task Start()
         {
             try
             {
@@ -35,7 +36,7 @@ namespace WebServer
                 {
                     HttpListenerContext context = listener.GetContext();
                     //ThreadPool.QueueUserWorkItem(ProcessRequest, context);
-                    Task.Run(() =>
+                    await Task.Run(()=>
                     {
                         ProcessRequest(context);
                     });
@@ -59,23 +60,23 @@ namespace WebServer
                 var context = (HttpListenerContext)state;
                 if (context.Request.HttpMethod != "GET")
                 {
-                    MakeResponse(400, context, "Get method required.");
+                    await MakeResponse(400, context, "Get method required.");
                     throw new Exception("Get method required.");
                 }
                 if (context.Request.Url?.Query == "")
                 {
-                    MakeResponse(400, context, "Empty query.");
+                    await MakeResponse(400, context, "Empty query.");
                     throw new Exception("Empty query.");
                 }
                 var param = context.Request.Url?.Query!.Remove(0, 1).Split("&");
                 if (param == null)
                 {
-                    MakeResponse(400, context, "Null query.");
+                    await MakeResponse(400, context, "Null query.");
                     throw new Exception("Null query.");
                 }
                 if (param.Length != 4)
                 {
-                    MakeResponse(400, context, "Query must have four parameters.");
+                    await MakeResponse(400, context, "Query must have four parameters.");
                     throw new Exception("Query must have four parameters.");
                 }
 
@@ -110,8 +111,8 @@ namespace WebServer
                     Console.WriteLine($"Time elapsed when obtaining data from API: {sw.Elapsed}");
                     if (weatherForecast == "")
                     {
-                        MakeResponse(400, context, "Failed request.");
-                        throw new Exception("Failed request.");
+                        await MakeResponse(400, context, "No forecast exists for this request.");
+                        throw new Exception("No forecast exists for this request.");
                     }
                     data = JObject.Parse(weatherForecast);
                     cache.Set(request, Encoding.UTF8.GetBytes(weatherForecast));
@@ -120,11 +121,15 @@ namespace WebServer
                 //ispis konzola
                 //Console.WriteLine(data);
                 //ispis postman
-                MakeResponse(200, context, data.ToString());
+                await MakeResponse(200, context, data.ToString());
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing request: {ex.Message}");
+            }
+            finally
+            {
+                await MakeResponse(400, (HttpListenerContext)state!, "Server error.");
             }
         }
 
@@ -141,7 +146,7 @@ namespace WebServer
             }
         }
 
-        private void MakeResponse(int responseCode, HttpListenerContext context, string text)
+        private async Task MakeResponse(int responseCode, HttpListenerContext context, string text)
         {
             var response = context.Response;
             response.StatusCode = responseCode;
@@ -158,7 +163,7 @@ namespace WebServer
                          </html>";
                 try
                 {
-                    response.OutputStream.Write(Encoding.ASCII.GetBytes(body));
+                    await response.OutputStream.WriteAsync(Encoding.ASCII.GetBytes(body)); 
                     response.Close();
                 }
                 catch (Exception e)
@@ -173,7 +178,7 @@ namespace WebServer
                 body = text;
                 try
                 {
-                    response.OutputStream.Write(Encoding.ASCII.GetBytes(body));
+                    await response.OutputStream.WriteAsync(Encoding.ASCII.GetBytes(body));
                     response.Close();
                 }
                 catch (Exception e)

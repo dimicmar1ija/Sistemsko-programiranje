@@ -4,7 +4,7 @@ namespace WebServer
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             string apiKey = "4bfbbbb6dec341f1b98101838242604"; //a4d1a083444548719ac122453242404
             string baseUrl = $"http://api.weatherapi.com/v1/forecast.json?key={apiKey}";
@@ -12,8 +12,7 @@ namespace WebServer
             var server = new WebServer(baseUrl, cacheCapacity);
             try
             {
-                server.Start();
-                server.Stop();
+                await server.Start();
             }
             catch (Exception ex)
             {
@@ -21,7 +20,7 @@ namespace WebServer
             }
             finally
             {
-                //server.Stop();
+                server.Stop();
             }
             Console.ReadLine();
         }
