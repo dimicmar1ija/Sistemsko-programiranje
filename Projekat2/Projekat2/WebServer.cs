@@ -87,7 +87,11 @@ namespace WebServer
                 var days = parameters["days"];
                 var aqi = parameters["aqi"];
                 var alerts = parameters["alerts"];
-
+                if(query==null || days==null || alerts==null || aqi == null)
+                {
+                    await MakeResponse(400, (HttpListenerContext)context, "Null parameter.");
+                    return;
+                }
                 JObject data;
                 Stopwatch sw = new();
                 sw.Start();
@@ -109,7 +113,7 @@ namespace WebServer
                     sw.Stop();
 
                     Console.WriteLine($"Time elapsed when obtaining data from API: {sw.Elapsed}");
-                    if (weatherForecast == "")
+                    if (weatherForecast == "" || weatherForecast==null)
                     {
                         await MakeResponse(400, context, "No forecast exists for this request.");
                         throw new Exception("No forecast exists for this request.");
@@ -126,6 +130,7 @@ namespace WebServer
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing request: {ex.Message}");
+                await MakeResponse(400, (HttpListenerContext)state!, ex.Message);
             }
             finally
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace WebServer
@@ -29,12 +30,14 @@ namespace WebServer
                 else
                 {
                     Console.WriteLine("Error: Failed to retrieve weather forecast.");
-                    return "";
+                    return null;
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                //throw new Exception(ex.Message);
+                Console.WriteLine(ex.Message);
+                return null;
             }
         }
     }
