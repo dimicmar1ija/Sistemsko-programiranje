@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projekat3", "Projekat3\Projekat3.csproj", "{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projekat3", "Projekat3\Projekat3.csproj", "{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLTKSharp", "..\..\..\..\Downloads\SistemskoProgramiranje-main\SistemskoProgramiranje-main\SysProgProjekat3_18240_18450\NLTKSharp\NLTKSharp\NLTKSharp.csproj", "{6C08285F-75DA-4B15-B841-E453FE031072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C08285F-75DA-4B15-B841-E453FE031072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C08285F-75DA-4B15-B841-E453FE031072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C08285F-75DA-4B15-B841-E453FE031072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C08285F-75DA-4B15-B841-E453FE031072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
