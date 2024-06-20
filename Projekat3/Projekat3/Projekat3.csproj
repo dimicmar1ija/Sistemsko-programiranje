@@ -12,4 +12,8 @@
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Downloads\SistemskoProgramiranje-main\SistemskoProgramiranje-main\SysProgProjekat3_18240_18450\NLTKSharp\NLTKSharp\NLTKSharp.csproj" />
+  </ItemGroup>
+
 </Project>
