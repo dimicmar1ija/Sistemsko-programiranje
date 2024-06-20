@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.9.34622.214
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projekat3", "Projekat3\Projekat3.csproj", "{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab3SysProg", "Lab3SysProg\Lab3SysProg.csproj", "{C1547F50-5D82-466B-90E4-E3E4008E14AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C08285F-75DA-4B15-B841-E453FE031072} = {6C08285F-75DA-4B15-B841-E453FE031072}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLTKSharp", "..\..\..\..\Downloads\SistemskoProgramiranje-main\SistemskoProgramiranje-main\SysProgProjekat3_18240_18450\NLTKSharp\NLTKSharp\NLTKSharp.csproj", "{6C08285F-75DA-4B15-B841-E453FE031072}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLTKSharp", "NLTKSharp\NLTKSharp\NLTKSharp.csproj", "{6C08285F-75DA-4B15-B841-E453FE031072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +16,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2A5FB40-C668-4B2E-9BB1-1F0BC3705E90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1547F50-5D82-466B-90E4-E3E4008E14AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1547F50-5D82-466B-90E4-E3E4008E14AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1547F50-5D82-466B-90E4-E3E4008E14AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1547F50-5D82-466B-90E4-E3E4008E14AC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C08285F-75DA-4B15-B841-E453FE031072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C08285F-75DA-4B15-B841-E453FE031072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C08285F-75DA-4B15-B841-E453FE031072}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -26,6 +29,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {91C14296-6A26-4643-9C37-EE78C8BA4C38}
+		SolutionGuid = {18AB7893-C95F-449E-9511-E2386AC66A53}
 	EndGlobalSection
 EndGlobal
