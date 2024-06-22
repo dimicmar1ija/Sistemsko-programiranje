@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -20,7 +21,7 @@ namespace Lab3SysProg.Streams
         // /?ids=1,2,3,4...
         private readonly Subject<YoutubeComment> subject = new Subject<YoutubeComment>();
         private const string apiKey = "AIzaSyD9tfQvk_jRPhcPQ7s-lMUXbCoAWRE9-YI";
-        private string baseUrl = "https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&maxResults=10&&videoId=";
+        private string baseUrl = "https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=";
         private string[] ids;
         private HttpClient httpClient = new HttpClient();
         public YoutubeCommentsStream(string[] ids)
@@ -39,7 +40,6 @@ namespace Lab3SysProg.Streams
                 {
                     var result = await httpClient.GetAsync(baseUrl + id + $"&key={apiKey}");
                     result.EnsureSuccessStatusCode();
-                    //dodati proveru ispravnosti rezultata
                     string resultString = await result.Content.ReadAsStringAsync();
                     JObject data= JObject.Parse(resultString);
                     var items=data.SelectToken("items");
@@ -53,11 +53,15 @@ namespace Lab3SysProg.Streams
                         }
                     }
                 }
-                subject.OnCompleted();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                subject.OnError(ex);
+                //Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                subject.OnCompleted();
             }
         }
         public IObservable<YoutubeComment> GetProxy()

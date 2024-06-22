@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,17 +14,17 @@ namespace Lab3SysProg.Observers
     {
         public string Name { get; set; }
         public string[] Ids { get; set; }
-        public StringWrapper StringWrapper { get; set; }
 
         private object lockObj = new object();
         private static string[] listOfWords = WordBank.ReturnAllWords().Split("\n");
         private static ConcurrentDictionary<string, string> wordMap = null;
         public Dictionary<string, int> CounterMap = new Dictionary<string, int>();
-        public YoutubeCommentsObserver(string name, string[] categories, StringWrapper wrapper, string[] ids)
+        private HttpListenerContext httpContext;
+        private Server server;
+        public YoutubeCommentsObserver(string name, string[] categories, string[] ids, HttpListenerContext context,Server server)
         {
             Name = name;
             Ids = ids;
-            StringWrapper = wrapper;
 
             foreach (var cat in categories)
             {
@@ -40,13 +41,13 @@ namespace Lab3SysProg.Observers
                         {
                             string[] tmp = word.Split("\t");
                             tmp[1] = tmp[1].Replace(" ", "");
-                            Console.WriteLine(tmp[1]);
-                            Console.WriteLine(tmp[2]);
                             wordMap[tmp[1]] = tmp[2];
                         }
                     }
                 }
             }
+            httpContext = context;
+            this.server = server;
         }
         public void OnCompleted()
         {
@@ -57,12 +58,13 @@ namespace Lab3SysProg.Observers
                 toPrint += $"<li>{item.Key} : {item.Value}</li>";
             }
             toPrint += "</ul><br>";
-            StringWrapper.Value = toPrint;
+            server.MakeResponse(200, httpContext, toPrint);
         }
 
         public void OnError(Exception error)
         {
             Console.WriteLine("Error in observer: " + error.Message);
+            server.MakeResponse(400, httpContext, error.Message);
         }
 
         public void OnNext(YoutubeComment value)

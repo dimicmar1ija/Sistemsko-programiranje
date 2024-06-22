@@ -86,21 +86,18 @@ namespace Lab3SysProg
                     {
                         idsList[i] = values[i];
                     }
-                    YoutubeCommentsStream stream=new YoutubeCommentsStream(idsList);
 
-                    string[] categories1 = new string[] { "undefined" };
+                    YoutubeCommentsStream stream =new YoutubeCommentsStream(idsList);
 
-                    StringWrapper wrapper1 = new();
+                    string[] categories1 = new string[] { "undefined" , "a" , "v" };
 
-                    YoutubeCommentsObserver subscriber1 = new("Observer1",categories1,wrapper1,idsList);
+                    YoutubeCommentsObserver subscriber1 = new("Observer1",categories1,idsList,context,this);
 
                     var proxy = stream.GetProxy();
                     var subscription1= proxy.Subscribe(subscriber1);
                     await stream.GetComments();
 
                     subscription1.Dispose();
-                    MakeResponse(200, context, wrapper1.Value);
-
 
                 }
                 catch (Exception ex)
@@ -110,7 +107,7 @@ namespace Lab3SysProg
                 }
             });
         }
-        private void MakeResponse(int responseCode, HttpListenerContext context, string text)
+        public void MakeResponse(int responseCode, HttpListenerContext context, string text)
         {
             var response = context.Response;
             response.StatusCode = responseCode;
