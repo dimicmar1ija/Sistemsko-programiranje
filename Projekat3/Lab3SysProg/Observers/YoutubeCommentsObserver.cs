@@ -21,13 +21,12 @@ namespace Lab3SysProg.Observers
         //The default concurrency level is equal to the number of CPUs. The higher the concurrency level is
         // the more concurrent write operations can take place without interference and blocking.
         public Dictionary<string, int> CounterMap = new Dictionary<string, int>();
-        private HttpListenerContext httpContext;
-        private Server server;
-        public YoutubeCommentsObserver(string name, string[] categories, string[] ids, HttpListenerContext context,Server server)
+        StringWrapper Wrapper;
+        public YoutubeCommentsObserver(string name, string[] categories, string[] ids, StringWrapper wrapper)
         {
             Name = name;
             Ids = ids;
-
+            Wrapper = wrapper;
             foreach (var cat in categories)
             {
                 CounterMap[cat] = 0;
@@ -48,25 +47,21 @@ namespace Lab3SysProg.Observers
                     }
                 }
             }
-            httpContext = context;
-            this.server = server;
         }
         public void OnCompleted()
         {
-            //i ovo
-            string toPrint= "<ul>";
+            var toPrint= "<ul>";
             foreach (var item in CounterMap)
             {
                 toPrint += $"<li>{item.Key} : {item.Value}</li>";
             }
             toPrint += "</ul><br>";
-            server.MakeResponse(200, httpContext, toPrint);
+            Wrapper.Value = toPrint;
         }
 
         public void OnError(Exception error)
         {
             Console.WriteLine("Error in observer: " + error.Message);
-            server.MakeResponse(400, httpContext, error.Message);
         }
 
         public void OnNext(YoutubeComment value)

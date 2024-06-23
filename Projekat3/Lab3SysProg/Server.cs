@@ -93,14 +93,32 @@ namespace Lab3SysProg
 
                     YoutubeCommentsStream stream = new YoutubeCommentsStream(idsList);
                     string[] categories1 = new string[] { "undefined", "a", "v" };
-                    YoutubeCommentsObserver observer1 = new("Observer1", categories1, idsList, context, this);
+                    string[] categories2 = new string[] { "i", "c" };
+
+                    StringWrapper wrapper1, wrapper2;
+                    wrapper1 = new();
+                    wrapper2 = new();
+
+                    YoutubeCommentsObserver observer1 = new("Observer1", categories1, idsList, wrapper1);
+                    YoutubeCommentsObserver observer2 = new("Observer2", categories2, idsList, wrapper2);
 
                     var proxy = stream.SubscribeOnObserveOn();
                     var subscription1 = proxy.Subscribe(observer1);
+                    var subscription2 = proxy.Subscribe(observer2);
 
                     await stream.GetComments();
 
                     subscription1.Dispose();
+                    subscription2.Dispose();
+
+                    if (wrapper1.Value == "" || wrapper2.Value == "")
+                    {
+                        MakeResponse(404, context, "Results were not found.");
+                    }
+                    else
+                    {
+                        MakeResponse(200, context, wrapper1.Value + wrapper2.Value);
+                    }
 
                 }
                 catch (Exception ex)
@@ -147,7 +165,28 @@ namespace Lab3SysProg
             {
                 response.ContentType = "text/html";
                 body = $@"<html>
-                    <head><title>Response</title></head>
+                    <head><title>Named entity recognition</title></head>
+                    <body>
+                        {text}
+                    </body>
+                         </html>";
+                try
+                {
+                    response.OutputStream.Write(Encoding.ASCII.GetBytes(body));
+                    response.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return;
+                }
+                return;
+            }
+            else if(responseCode==404)
+            {
+                response.ContentType = "text/html";
+                body = $@"<html>
+                    <head><title>Not found</title></head>
                     <body>
                         {text}
                     </body>

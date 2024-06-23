@@ -59,7 +59,6 @@ namespace Lab3SysProg.Streams
             catch (Exception ex)
             {
                 subject.OnError(ex);
-                //Console.WriteLine(ex.ToString());
             }
         }
         public IObservable<YoutubeComment> SubscribeOnObserveOn()
