@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Reactive.Concurrency;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Lab3SysProg.Streams
 {
-    class YoutubeCommentsStream
+    class YoutubeCommentsStream : IObservable<YoutubeComment>
     {
         /*https:/youtube.googleapis.com/youtube/v3/commentThreads?
          part=snippet%2Creplies&videoId=_VB39Jo8mAQ&key=[YOUR_API_KEY]
@@ -53,21 +54,20 @@ namespace Lab3SysProg.Streams
                         }
                     }
                 }
+                subject.OnCompleted();
             }
             catch (Exception ex)
             {
                 subject.OnError(ex);
                 //Console.WriteLine(ex.ToString());
             }
-            finally
-            {
-                subject.OnCompleted();
-            }
         }
-        public IObservable<YoutubeComment> GetProxy()
+        public IObservable<YoutubeComment> SubscribeOnObserveOn()
         {
+            //Console.WriteLine($"Thread: {Thread.CurrentThread.ManagedThreadId}");
             return subject.SubscribeOn(ThreadPoolScheduler.Instance).ObserveOn(Scheduler.CurrentThread);
         }
-
+        //When the SubscribeOn method is used, when anything subscribes, the subscribe method will be run on the supplied scheduler.
+        //Likewise, using ObserveOn, the OnNext invocations will be run using the corresponding scheduler.
     }
 }

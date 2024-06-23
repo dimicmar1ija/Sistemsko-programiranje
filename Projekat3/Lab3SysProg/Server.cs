@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -48,7 +50,9 @@ namespace Lab3SysProg
         {
             await Task.Run(async () =>
             {
+
                 HttpListenerRequest request = context.Request;
+                //Console.WriteLine($"Request: {request.RawUrl}, Thread: {Thread.CurrentThread.ManagedThreadId}");
                 try
                 {
                     if (context.Request.HttpMethod != "GET")
@@ -62,39 +66,38 @@ namespace Lab3SysProg
                         return;
                     }
                     var param = context.Request.Url?.Query!.Remove(0, 1);
-                    if (param == null || param=="")
+                    if (param == null || param == "")
                     {
                         MakeResponse(400, context, "Null query.");
                         return;
                     }
                     string allParams = context.Request.Url?.Query!;
                     var parameters = HttpUtility.ParseQueryString(allParams);
-                    if(parameters.Count!=1)
+                    if (parameters.Count != 1)
                     {
                         MakeResponse(400, context, "Request must have one parameter.");
                         return;
                     }
                     var ids = parameters["ids"];
-                    if (ids == "" || ids==null)
+                    if (ids == "" || ids == null)
                     {
                         MakeResponse(400, context, "Bad request.");
                         return;
                     }
-                    var values=ids.Split(",");
-                    idsList=new string[values.Length];
+                    var values = ids.Split(",");
+                    idsList = new string[values.Length];
                     for (int i = 0; i < values.Length; i++)
                     {
                         idsList[i] = values[i];
                     }
 
-                    YoutubeCommentsStream stream =new YoutubeCommentsStream(idsList);
+                    YoutubeCommentsStream stream = new YoutubeCommentsStream(idsList);
+                    string[] categories1 = new string[] { "undefined", "a", "v" };
+                    YoutubeCommentsObserver observer1 = new("Observer1", categories1, idsList, context, this);
 
-                    string[] categories1 = new string[] { "undefined" , "a" , "v" };
+                    var proxy = stream.SubscribeOnObserveOn();
+                    var subscription1 = proxy.Subscribe(observer1);
 
-                    YoutubeCommentsObserver subscriber1 = new("Observer1",categories1,idsList,context,this);
-
-                    var proxy = stream.GetProxy();
-                    var subscription1= proxy.Subscribe(subscriber1);
                     await stream.GetComments();
 
                     subscription1.Dispose();
@@ -107,6 +110,13 @@ namespace Lab3SysProg
                 }
             });
         }
+        public void Stop()
+        {
+            Console.WriteLine("Server stopped.");
+            listener.Stop();
+            listener.Close();
+        }
+
         public void MakeResponse(int responseCode, HttpListenerContext context, string text)
         {
             var response = context.Response;
@@ -135,7 +145,13 @@ namespace Lab3SysProg
             }
             else if (responseCode == 200)
             {
-                body = text;
+                response.ContentType = "text/html";
+                body = $@"<html>
+                    <head><title>Response</title></head>
+                    <body>
+                        {text}
+                    </body>
+                         </html>";
                 try
                 {
                     response.OutputStream.Write(Encoding.ASCII.GetBytes(body));

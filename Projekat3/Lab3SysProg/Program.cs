@@ -1,4 +1,5 @@
 ﻿using Lab3SysProg;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 class Program
@@ -9,6 +10,9 @@ class Program
         try
         {
             server.Start();
+            Console.ReadLine();
+            server.Stop();
+
         }
         catch (Exception ex)
         {
