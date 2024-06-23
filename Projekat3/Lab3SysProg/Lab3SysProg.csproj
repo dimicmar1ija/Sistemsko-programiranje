@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenNLP.NET" Version="1.9.4.1" />
 	  <PackageReference Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
 

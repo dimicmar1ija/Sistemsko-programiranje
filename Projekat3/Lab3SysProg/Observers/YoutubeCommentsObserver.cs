@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Lab3SysProg.EntityExtractor;
 
 namespace Lab3SysProg.Observers
 {
@@ -21,6 +22,11 @@ namespace Lab3SysProg.Observers
         //The default concurrency level is equal to the number of CPUs. The higher the concurrency level is
         // the more concurrent write operations can take place without interference and blocking.
         public Dictionary<string, int> CounterMap = new Dictionary<string, int>();
+
+        public List<string> lokacije = new List<string>();
+        public List<string> time = new List<string>();
+
+
         StringWrapper Wrapper;
         public YoutubeCommentsObserver(string name, string[] categories, string[] ids, StringWrapper wrapper)
         {
@@ -50,13 +56,25 @@ namespace Lab3SysProg.Observers
         }
         public void OnCompleted()
         {
-            var toPrint= "<ul>";
+            var toPrint = "<ul>";
             foreach (var item in CounterMap)
             {
                 toPrint += $"<li>{item.Key} : {item.Value}</li>";
             }
             toPrint += "</ul><br>";
             Wrapper.Value = toPrint;
+
+            //var toPrint = "<ul>";
+            //foreach (var item in lokacije)
+            //{
+            //    toPrint += $"<li>{item} : Location</li>";
+            //}
+            //foreach (var item in time)
+            //{
+            //    toPrint += $"<li>{item} : Time</li>";
+            //}
+            //toPrint += "</ul><br>";
+            //Wrapper.Value = toPrint;
         }
 
         public void OnError(Exception error)
@@ -75,9 +93,20 @@ namespace Lab3SysProg.Observers
             //{
             //    Console.WriteLine(entity.ToString());
             //}
-            string[] text = Tokenizer.Tokenize(value.Text);
             //Console.WriteLine(value.Text);
 
+            //EntityExtractor entityExtractor = new EntityExtractor();
+            //List<string> lok = entityExtractor.ExtractEntities(value.Text, EntityType.Location);
+            //List<string> vreme = entityExtractor.ExtractEntities(value.Text, EntityType.Time);
+            //if (lok.Count > 0)
+            //{
+            //    lokacije = lok;
+            //}
+            //if (vreme.Count > 0)
+            //{
+            //    time = vreme;
+            //}
+            string[] text = Tokenizer.Tokenize(value.Text);
             foreach (var item in text)
             {
                 string category = "";
@@ -86,6 +115,7 @@ namespace Lab3SysProg.Observers
                 {
                     category = "undefined";
                 }
+                Console.WriteLine($"{item} {category}");
                 int counter;
                 if (CounterMap.TryGetValue(category, out counter))
                 {
